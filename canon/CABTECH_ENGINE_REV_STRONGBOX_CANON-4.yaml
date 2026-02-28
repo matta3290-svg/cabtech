@@ -1,0 +1,413 @@
+# CABTECH_ENGINE_REV — STRONGBOX_CANONICAL_INDEX vNEXT
+# MODE=DETERMINISTIC
+# PURPOSE=Bedrock canon for deterministic cabinet geometry + compile contract.
+# NOTE=This file contains NO project/job patches. Runtime modifiers exist only as COMMANDS.
+
+cabtech_engine_rev:
+  version: "1.0"
+  mode: "DETERMINISTIC"
+  authority: "STRONGBOX_CANON"
+  units:
+    primary: "in"
+    secondary: "mm"
+    inch_precision: "1/32"
+    mm_precision: 0.1
+    conversion:
+      in_to_mm: 25.4
+      mm_to_in: 0.03937007874
+    rounding_policy:
+      mm:
+        rule: "round_0.1mm"
+      inches:
+        rule: "round_to_1/32"
+  world:
+    axes:
+      X: "run_length_axis"
+      Y: "vertical_axis"
+      Z: "depth_from_wall_axis"
+    origin_policy:
+      allowed:
+        - "BACK_RIGHT_FLOOR"
+        - "BACK_LEFT_FLOOR"
+        - "FRONT_RIGHT_FLOOR"
+        - "FRONT_LEFT_FLOOR"
+      default: "BACK_RIGHT_FLOOR"
+    reference_planes:
+      VFD:
+        name: "VISIBLE_FINISHED_DATUM"
+        description: "Finished face datum plane(s) used for visual alignment and drawing."
+      VFPLR:
+        name: "VISIBLE_FINISHED_PLANE_LEFT_RIGHT"
+        description: "Left/right finished face datum plane(s); used for returns, valence, trims."
+  datums:
+    kitchen:
+      CTOP_TOP: "36in"
+      UPPER_START_DEFAULT: "54in"
+    vanity:
+      DEPTH_STD: "525mm"
+      DEPTH_OPTION_600: "600mm"
+      CTOP_THK_STD: "1.1875in"
+  materials:
+    thickness:
+      carcass_default: "16mm"
+      carcass_option: "19mm"
+      finished_panels_std: "19mm"
+      doors_drawers_std: "19mm"
+      toe_kick_skin_std: "19mm"
+      back_panel_std: "16mm"
+    rules:
+      - id: "MATERIAL_THK_NO_OVERRIDE"
+        text: "Design layers cannot override structural thickness unless explicitly engaged by a material preset."
+  reveal:
+    STD: "1.5mm"
+    TIGHT: "1.0mm"
+    EXPRESSED_MIN: "3.0mm"
+  finished_face:
+    proudness_std: "22mm"
+    bumper_allowance: "3mm"
+    rule:
+      id: "FF_22_RULE"
+      text: "Finished face plane = carcass front + 22mm (nest for 19mm face + 3mm bumper)."
+
+  depth_families:
+    BASE:
+      default: "600mm"
+      modifiable: true
+    WALL:
+      W_STD: "300mm"
+      modifiable: true
+    WALL_DEEP:
+      allowed_presets_mm: [635, 660, 686, 762]
+      modifiable: true
+    SHALLOW_BASE_WALL:
+      SBW_matches: "WALL and WALL_DEEP families"
+      description: "SBW steps-in on base run; uses upper depth families."
+
+  construction:
+    base_carcass:
+      fixed_bottom: true
+      top_rails:
+        front_rail_depth: "4in"
+        back_rail_depth: "4in"
+    toe_kick:
+      height_default: "4.25in"
+      height_option: "2.0in"
+      face_flush_with: "doors_drawers_above"
+      modifiable: true
+    countertop:
+      depth_wall_std: "25.5in"
+      thickness_std: "1.1875in"
+      overhang_past_finished_faces_std: "1.0in"
+      islands_overhang_all_sides: true
+      tpog_step_out_rule:
+        id: "CTOP_TPOG_STEP_OUT"
+        text: "If TPOG steps out past default CTOP depth, CTOP depth must follow (CTOP becomes deeper where required)."
+
+  sys32_ruleset:
+    id: "SYS32_RULESET_v1_0"
+    locked: true
+    globals:
+      SYS32_MODE: true
+      SYS32_REF_FACE: "FINISHED_FRONT"
+    constants:
+      grid_pitch_y: "32mm"
+      sys_hole_diam: "5mm"
+      sys_hole_pitch_y: "32mm"
+      sys_hole_setback_from_finished_front: "37mm"
+      const_hole_diam_default: "8mm"
+    construction_dowel_logic:
+      locked: true
+      description: "Construction/dowel rows used for assembly rails, fixed shelf top/bottom, gables."
+      from_front_edge:
+        first_row: "32mm"
+        second_row: "64mm"
+      from_back_edge:
+        first_row: "32mm"
+        second_row: "64mm"
+      full_fixed_shelves:
+        center_row_required: true
+      note: "SYS holes (5mm) remain at 37mm setback; dowel rows are separate."
+    exceptions:
+      allowed: ["NONE", "LENGTH_FREE", "WIDTH_FREE", "HOLE_FREE", "MIXED"]
+      rule: "Exceptions must be declared explicitly; never implicit."
+
+  tokens:
+    # --- Utility / Structural ---
+    FILL:
+      class: "SPACER"
+      consumes_x: true
+      width_user_defined: true
+      finished_face_plane: "follows_adjacent_finished_face"
+    BLK_MOD:
+      class: "BLOCK_OVERRIDE"
+      consumes_x: false
+      user_defined_xyz: true
+      removable: true
+      purpose: "Reserve or block space anywhere in the room bounds."
+    PIN:
+      class: "COMMAND_TARGET"
+      purpose: "Applies post-compile spatial edits; not a geometry token."
+
+    # --- Base cabinet families ---
+    BD_FAMILY:
+      class: "BASE_CABINET"
+      depth_default: "600mm"
+      modifiable_depth: true
+      gable_height_default: "768mm"
+      notes:
+        - "BDn indicates bank of drawers count (BD2, BD3, BD4...)."
+    BD3:
+      inherits: "BD_FAMILY"
+      drawer_count: 3
+      default_drawer_fronts_mm: [157, 287, 317]
+      notes:
+        - "Drawer front heights are modifiable; reveals apply."
+    BD1:
+      inherits: "BD_FAMILY"
+      drawer_count: 1
+      notes:
+        - "Drawer with doors below (doors not detailed here)."
+
+    BWS:
+      class: "BASE_SINK"
+      inherits_depth: "BASE"
+      notes:
+        - "Sink alignment typically centered to window when window constraint present."
+    BWS_FARM_HOUSE_SINK:
+      class: "BASE_SINK_FARMHOUSE"
+      inherits_depth: "BASE"
+      width_rule:
+        text: "Run consumption width = user_sink_width + 3in minimum."
+      height_rule:
+        text: "User-defined carcass height; apron + sink interface completes overall visual height."
+      zplane_behavior:
+        bump_out_allowed: true
+        step_in_allowed: false
+      requires:
+        - "APRON"
+
+    APRON:
+      class: "FACE_PANEL"
+      purpose: "Farmhouse sink apron cutout + closure."
+      scribe_required: true
+      note: "CTOP interaction declared by sink_interface_mode."
+
+    # --- Uppers / walls ---
+    W:
+      class: "WALL_CABINET"
+      depth_default: "300mm"
+      height_nominal_in: [30, 36, 39, 42]
+      width_user_defined: true
+      modifiable_depth: true
+    WD:
+      class: "WALL_DEEP"
+      depth_presets_mm: [635, 660, 686, 762]
+      width_user_defined: true
+      modifiable_depth: true
+    WDTA:
+      class: "WALL_DEEP_TWIN_APPL"
+      description: "Wall deep with 2 appliances stacked on Y, separated by shelf."
+      notes:
+        - "TPOG proudness provides nest for FIN fascia + bumper."
+    OS:
+      class: "OPEN_SHELF"
+      finished_faces: ["top", "bottom", "front"]
+      side_edges: "optional_finished"
+      depth_default_rule:
+        text: "Default depth = adjacent carcass depth + 22mm to avoid 22mm ledge."
+      modifiable_depth: true
+
+    # --- Panels / finished faces ---
+    WPOG:
+      class: "WALL_PLANT_ON_GABLE"
+      proudness: "22mm"
+      height_rule:
+        text: "WPOG height = carcass height - 3mm (1.5mm top + 1.5mm bottom) to match reveal logic."
+      depth_rule:
+        text: "Finished depth = carcass depth + 22mm (scribe for fab handled outside canon)."
+    BPOG:
+      class: "BASE_PLANT_ON_GABLE"
+      proudness: "22mm"
+      scribe_fab_note: "Fab scribe allowances are outside canon (visual canon is finished)."
+    TPOG:
+      class: "TALL_PLANT_ON_GABLE"
+      proudness: "22mm"
+      height_rule:
+        text: "Finishes 1.5mm down from carcass max height before trim."
+    POD:
+      class: "PLANT_ON_DOOR"
+      purpose: "Shaker-style overlay pod; visual unifier."
+
+    # --- Trims ---
+    VALENCE:
+      class: "UNDER_UPPER_TRIM"
+      thickness_default: "19mm"
+      zplane_rule:
+        text: "Flush with finished faces; follows depth changes; returns under WPOG at open ends; terminates at wall/TPOG."
+    LRISER:
+      class: "TOP_TRIM_RISER"
+      height_default: "4in"
+      thickness_default: "19mm"
+      zplane_rule:
+        text: "Follows finished faces in plan; terminates into wall/bulkhead; used as crown backer or finished face."
+      ceiling_fill_variant:
+        description: "3/4in boards on the flat; follows LRISER rules."
+
+    # --- Corner cabinets / transitions ---
+    BWDC:
+      class: "BASE_WALL_DOUBLE_CORNER"
+      description: "Default corner base cabinet (not lazy susan; accessories handled separately)."
+      depth_rule:
+        text: "Carcass depth matches adjacent cabinet carcass depth."
+      fixed_shelf_top_bottom_follow_run_lines: true
+      consumes_x_on_both_runs: true
+    WAC:
+      class: "WALL_ANGLED_CORNER"
+      face_angle: "45deg"
+      gable_depth_rule: "matches_adjacent_depths"
+      consumes_x_on_both_runs: true
+    BWCL:
+      class: "BASE_WALL_BLIND_CORNER_LEFT"
+      carcass_depth: "600mm"
+      filler_width: "60mm"
+      blind_panel_depth: "carcass_depth + 60mm"
+      alignment_rule:
+        text: "Filler + blind panel + finished fronts intersect at imaginary 45deg line."
+    BWCR:
+      class: "BASE_WALL_BLIND_CORNER_RIGHT"
+      carcass_depth: "600mm"
+      filler_width: "60mm"
+      blind_panel_depth: "carcass_depth + 60mm"
+      alignment_rule:
+        text: "Filler + blind panel + finished fronts intersect at imaginary 45deg line."
+    corner_logic:
+      CORNER_OUT_MIN:
+        ref: "CARCASS_GABLE_EDGE"
+        value: "27in"
+      L_FILLER:
+        width: "60mm"
+        proudness_past_gable: "22mm"
+        meet_rule: "Intersect at 45deg line between runs."
+
+    # --- Islands / step-in / barback ---
+    ISLAND:
+      class: "ISLAND_ASSEMBLY"
+      description: "Back-to-back base + SBW assemblies; may include voids for electrical."
+    SBW:
+      class: "SHALLOW_BASE_WALL"
+      inherits_depth_families: ["W", "WD"]
+      step_in_on_base_run: true
+      bpoG_rule:
+        text: "If open ends, SBW_BPOG = SBW carcass + 22mm."
+      ctop_overhang_applies: true
+    BAR_BACK:
+      class: "ISLAND_BACK_FINISH"
+      length_rule:
+        text: "Bar back length = resolved_run_x + 3mm (tolerance)."
+      seam_rule:
+        text: "If length exceeds 96in rip capability, split into two pieces with center seam."
+      end_conditions:
+        text: "If raw backside, barback overhangs backside by 23.5mm LR; BPOGs meet barback at ends."
+    DD:
+      class: "DESK_POCKET"
+      clearance_under_drawer_min: "30in"
+      side_condition_default: "OPEN_BOTH"
+      side_condition_options: ["OPEN_BOTH", "LEFT_CLOSED", "RIGHT_CLOSED", "BOTH_CLOSED"]
+
+    # --- Vanity / platform base / supports ---
+    VWS:
+      class: "VANITY_SINK_BOX"
+      depth_default: "525mm"
+      depth_option_600: true
+      notes:
+        - "Sink centered under light sconces when constraint present."
+    PLATFORM_BASE:
+      class: "PLATFORM_BASE"
+      description: "Structural platform occupying XYZ volume; supports floating vanity."
+      depth_from_wall: "8in"
+      length_rule:
+        text: "Typical length = run_sum_x - 8in (one open end) or -16in (two open ends)."
+      height_rule:
+        text: "Platform height typically 7.25in + 0.75in skin = 8in total (modifiable)."
+    POST_STRUCTR:
+      class: "STRUCTURAL_POST"
+      default_size: "6x6"
+      default_height: "34.75in"
+      purpose: "Supports large CTOP overhangs; finished material; modifiable XYZ."
+
+  commands:
+    # Commands are part of canon vocabulary. They do not constitute patches.
+    - id: "COMPILE"
+      purpose: "Resolve geometry deterministically from inputs."
+      required_position: "last"
+    - id: "SECTION"
+      purpose: "Declare active depth family + zplane policy container."
+    - id: "RUNX"
+      purpose: "Declare a run along X with DIR and SEQ segments."
+    - id: "STACK"
+      purpose: "Vertical stacking anchored to SEG or X-range."
+    - id: "PIN"
+      purpose: "Post-compile explicit XYZ edits."
+      syntax: "PIN TARGET=<id|set> X=x0..x1 Y=y0..y1 Z=z0..z1 OP=<set|move|replace|trim>"
+    - id: "MODIFY"
+      purpose: "Modify declared inputs before compile."
+      syntax: "MODIFY TARGET=<id> FIELD=<name> VALUE=<value>"
+    - id: "BLK_MOD"
+      purpose: "Declare block volume reservation or override region."
+      syntax: "BLK_MOD ID=<id> X=x0..x1 Y=y0..y1 Z=z0..z1 MODE=<reserve|cut|mask>"
+    - id: "BUMP_OUT"
+      purpose: "Increase Z finished plane locally."
+      syntax: "BUMP_OUT TARGET=<id|set> AMOUNT=<value>"
+    - id: "STEP_IN"
+      purpose: "Decrease Z finished plane locally."
+      syntax: "STEP_IN TARGET=<id|set> AMOUNT=<value>"
+    - id: "SNAP"
+      purpose: "Snap values to SYS32 grid."
+      syntax: "SNAP AXIS=<X|Y|Z> VALUE=<value>"
+    - id: "TRACE"
+      purpose: "Planview tracing of compiled geometry."
+      syntax: "TRACE RUN=<id> MODE=<plan|elev>"
+    - id: "EXPORT_DRAW_V1"
+      purpose: "Export resolved bounding boxes for 2D perspective line drawing."
+      syntax: "EXPORT_DRAW_V1 STYLE=BLACK_LINES_WHITE_BG PROJECTION=2_POINT"
+
+  compile_contract:
+    required_inputs_order:
+      - "PROJECT"
+      - "UNITS"
+      - "ROOM"
+      - "SECTION"
+      - "RUNX"
+      - "RUNX.SEQ"
+      - "APPL (if any)"
+      - "CTOP span (if any)"
+      - "STACK (if any)"
+      - "COMPILE"
+    mandatory_rules:
+      - "No SECTION => error (no depth authority)."
+      - "Every RUNX segment must declare X consumption width."
+      - "Stacks must anchor to SEG or X-range (never float)."
+      - "No implicit inference; only explicit declarations."
+
+  drawing_export:
+    draw_export_v1:
+      description: "Renderer transport for professional black-line perspective on white background."
+      required_per_object:
+        - "id"
+        - "class"
+        - "x0"
+        - "x1"
+        - "y0"
+        - "y1"
+        - "z0"
+        - "z1"
+        - "rotation"
+      locked_style:
+        projection: "2_point"
+        eye_height: "66in"
+        yaw: "45deg"
+        pitch: "-18deg"
+        roll: "0deg"
+        hidden_lines: false
+        background: "white"
+        line_color: "black"
