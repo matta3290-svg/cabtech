@@ -1,0 +1,9 @@
+strongbox_canon_header:
+  schema_id: "STRONGBOX_CANON_HEADER_v1.0"
+  version: "1.0"
+  authority: "STRONGBOX_CANON"
+  immutability:
+    retroactive_mutation_forbidden: true
+  version_binding:
+    projects_bind_to_explicit_version: true
+    
