@@ -17,21 +17,13 @@ class CanonIndex {
     String? strongbox;
 
     for (final entry in bundle.filesByPath.entries) {
-      final path = entry.key;
       final parsed = entry.value.parsed;
 
       if (parsed is Map) {
-        if (path.contains('ENGINE_REV')) {
-          engine = parsed['cabtech_engine_rev']?['version']?.toString();
-        }
-
-        if (path.contains('GLOBAL_SCHEMA')) {
-          global = parsed['global_schema']?['version']?.toString();
-        }
-
-        if (path.contains('STRONGBOX_CANON')) {
-          strongbox = parsed['strongbox_canon']?['version']?.toString();
-        }
+        engine = parsed['cabtech_engine_rev']?['version']?.toString() ?? engine;
+        global = parsed['global_schema_header']?['version']?.toString() ?? global;
+        strongbox =
+            parsed['strongbox_canon_header']?['version']?.toString() ?? strongbox;
       }
     }
 

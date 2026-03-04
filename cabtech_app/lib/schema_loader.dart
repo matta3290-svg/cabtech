@@ -1,7 +1,8 @@
 import 'engine/canon_loader.dart';
 import 'engine/canon_index.dart';
+import 'engine/engine_state.dart';
 
-Future<void> loadSchemas() async {
+Future<EngineState> loadSchemas() async {
   final bundle = await CanonLoader.load(assetPaths: const [
     'assets/schema/GLOBAL_SCHEMA_HEADER_v1.0.yaml',
     'assets/schema/STRONGBOX_CANON_HEADER_v1.0.yaml',
@@ -10,12 +11,16 @@ Future<void> loadSchemas() async {
 
   final index = CanonIndex.build(bundle);
 
-  print('CANON_BUNDLE_OK files=${bundle.files.length}');
-  for (final p in bundle.files) {
-    print(' - $p');
-  }
+  final state = EngineState(
+    canonBundle: bundle,
+    canonIndex: index,
+    validation: const ValidationReport(),
+  );
 
-  print('ENGINE_VERSION=${index.engineVersion}');
-  print('GLOBAL_VERSION=${index.globalSchemaVersion}');
-  print('STRONGBOX_VERSION=${index.strongboxVersion}');
+  print('ENGINE_READY ok=${state.validation.ok} '
+      'engine=${state.canonIndex.engineVersion} '
+      'global=${state.canonIndex.globalSchemaVersion} '
+      'strongbox=${state.canonIndex.strongboxVersion}');
+
+  return state;
 }
