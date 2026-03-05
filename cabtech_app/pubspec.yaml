@@ -34,7 +34,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  yaml: ^3.1.3
 
 dev_dependencies:
   flutter_test:
@@ -53,10 +52,10 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true
+
   assets:
-   - assets/schema/GLOBAL_SCHEMA_HEADER_v1.0.yaml
-   - assets/schema/CABTECH_ENGINE_REV_v1.0.yaml
-   - assets/schema/STRONGBOX_CANON_HEADER_v1.0.yaml  
+    - assets/schema/
+    - assets/locks/  
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -84,7 +83,49 @@ flutter:
   #       - asset: fonts/Schyler-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
-  #   - family: Trajan Pro
+  #   - family: Trajan Pimport 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: SchemaTestPage(),
+    );
+  }
+}
+
+class SchemaTestPage extends StatefulWidget {
+  const SchemaTestPage({super.key});
+
+  @override
+  State<SchemaTestPage> createState() => _SchemaTestPageState();
+}
+
+class _SchemaTestPageState extends State<SchemaTestPage> {
+  String content = "Loading schema...";
+
+  @override
+  void initState() {
+    super.initState();
+    loadSchema();
+  }
+
+  Future<void> loadSchema() async {
+    try {
+      final data = await rootBundle.loadString(
+        'assets/schema/GLOBAL_SCHEMA_HEADER_v1.0.yaml',
+      );
+
+      setState(() {
+        content = data.length > 500
+            ? data.substring(0, 500)
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf

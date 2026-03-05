@@ -10,17 +10,21 @@ Future<EngineState> loadSchemas() async {
   ]);
 
   final index = CanonIndex.build(bundle);
+  final validation = ValidationReport.validate(bundle, index);
 
   final state = EngineState(
     canonBundle: bundle,
     canonIndex: index,
-    validation: const ValidationReport(),
+    validation: validation,
   );
 
-  print('ENGINE_READY ok=${state.validation.ok} '
-      'engine=${state.canonIndex.engineVersion} '
-      'global=${state.canonIndex.globalSchemaVersion} '
-      'strongbox=${state.canonIndex.strongboxVersion}');
+  print(
+    'ENGINE_READY ok=${state.validation.ok} '
+    'engine=${state.canonIndex.engineVersion} '
+    'global=${state.canonIndex.globalSchemaVersion} '
+    'strongbox=${state.canonIndex.strongboxVersion} '
+    'errors=${state.validation.errors.length}',
+  );
 
   return state;
 }
