@@ -1,8 +1,10 @@
 import 'engine/canon_loader.dart';
 import 'engine/canon_index.dart';
 import 'engine/engine_state.dart';
+import 'engine/lock_registry.dart';
 
 Future<EngineState> loadSchemas() async {
+
   final bundle = await CanonLoader.load(assetPaths: const [
     'assets/schema/GLOBAL_SCHEMA_HEADER_v1.0.yaml',
     'assets/schema/STRONGBOX_CANON_HEADER_v1.0.yaml',
@@ -10,19 +12,27 @@ Future<EngineState> loadSchemas() async {
   ]);
 
   final index = CanonIndex.build(bundle);
-  final validation = ValidationReport.validate(bundle, index);
+
+  final locks = await LockRegistry.loadFromAssets(
+    path: 'assets/locks/locks_v0.yaml',
+  );
+
+  final validation = ValidationReport.validate(bundle, index, locks);
 
   final state = EngineState(
     canonBundle: bundle,
     canonIndex: index,
+    lockRegistry: locks,
     validation: validation,
   );
 
+  // ignore: avoid_print
   print(
     'ENGINE_READY ok=${state.validation.ok} '
     'engine=${state.canonIndex.engineVersion} '
     'global=${state.canonIndex.globalSchemaVersion} '
     'strongbox=${state.canonIndex.strongboxVersion} '
+    'locks=${state.lockRegistry?.count ?? 0} '
     'errors=${state.validation.errors.length}',
   );
 

@@ -1,34 +1,38 @@
 import 'canon_bundle.dart';
 import 'canon_index.dart';
+import 'lock_registry.dart';
 
-class ValidationReport {static ValidationReport validate(
-  CanonBundle bundle,
-  CanonIndex index,
-) {
-  final errors = <String>[];
-  final warnings = <String>[];
+class ValidationReport {
+  static ValidationReport validate(
+    CanonBundle bundle,
+    CanonIndex index,
+    LockRegistry locks,
+  ) {
+    final errors = <String>[];
+    final warnings = <String>[];
 
-  if (bundle.files.isEmpty) {
-    errors.add('No canon files loaded.');
+    if (bundle.files.isEmpty) {
+      errors.add('No canon files loaded.');
+    }
+
+    if (index.engineVersion == null) {
+      errors.add('Missing engine version.');
+    }
+    if (index.globalSchemaVersion == null) {
+      errors.add('Missing global schema version.');
+    }
+    if (index.strongboxVersion == null) {
+      errors.add('Missing strongbox version.');
+    }
+
+    // Locks sanity (v0 scaffold)
+    if (locks.version.isEmpty) {
+      errors.add('Missing lock registry version.');
+    }
+
+    return ValidationReport(errors: errors, warnings: warnings);
   }
 
-  if (index.engineVersion == null) {
-    errors.add('Missing engine version.');
-  }
-
-  if (index.globalSchemaVersion == null) {
-    errors.add('Missing global schema version.');
-  }
-
-  if (index.strongboxVersion == null) {
-    errors.add('Missing strongbox version.');
-  }
-
-  return ValidationReport(
-    errors: errors,
-    warnings: warnings,
-  );
-}
   final List<String> errors;
   final List<String> warnings;
 
@@ -41,13 +45,11 @@ class ValidationReport {static ValidationReport validate(
 }
 
 class EngineState {
-  final CanonBundle canonBundle;
-  final CanonIndex canonIndex;
-  final ValidationReport validation;
-
+ 
   const EngineState({
     required this.canonBundle,
     required this.canonIndex,
+    required this.lockRegistry,
     required this.validation,
   });
 }
