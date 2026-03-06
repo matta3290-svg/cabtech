@@ -30,6 +30,12 @@ class CompilerStub {
     objectClass: 'SEGMENT',
     status: 'VALID',
   ),
+  DomObjObject(
+    objectId: 'OBJ_CAB_001',
+    sourceToken: 'BD3',
+    objectClass: 'BASE_CABINET',
+    status: 'VALID',
+  ),
 ],
       validation: DomObjValidation(
         ok: true,
