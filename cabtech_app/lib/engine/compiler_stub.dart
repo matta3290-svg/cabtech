@@ -24,6 +24,12 @@ class CompilerStub {
     objectClass: 'RUN',
     status: 'VALID',
   ),
+  DomObjObject(
+    objectId: 'OBJ_SEG_001',
+    sourceToken: 'SEGMENT',
+    objectClass: 'SEGMENT',
+    status: 'VALID',
+  ),
 ],
       validation: DomObjValidation(
         ok: true,
