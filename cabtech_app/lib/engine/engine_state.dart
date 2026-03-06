@@ -45,7 +45,11 @@ class ValidationReport {
 }
 
 class EngineState {
- 
+  final CanonBundle canonBundle;
+  final CanonIndex canonIndex;
+  final LockRegistry lockRegistry;
+  final ValidationReport validation;
+
   const EngineState({
     required this.canonBundle,
     required this.canonIndex,
