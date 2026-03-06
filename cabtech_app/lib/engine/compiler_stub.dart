@@ -11,11 +11,17 @@ class CompilerStub {
         strongboxVersion: state.canonIndex.strongboxVersion ?? 'unknown',
         lockRegistryVersion: state.lockRegistry.version,
       ),
-      objects: const [
+    objects: const [
   DomObjObject(
     objectId: 'OBJ_ROOM_001',
     sourceToken: 'ROOM',
     objectClass: 'ROOM',
+    status: 'VALID',
+  ),
+  DomObjObject(
+    objectId: 'OBJ_RUN_001',
+    sourceToken: 'RUN',
+    objectClass: 'RUN',
     status: 'VALID',
   ),
 ],
