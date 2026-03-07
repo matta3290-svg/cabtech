@@ -37,6 +37,7 @@ class DomObjObject {
   final String? segmentId;
   final int? x0;
   final int? x1;
+  final int? spanUsed;
 
   const DomObjObject({
     required this.objectId,
@@ -49,6 +50,7 @@ class DomObjObject {
     this.segmentId,
         this.x0,
     this.x1,
+    this.spanUsed,
   });
 }
 

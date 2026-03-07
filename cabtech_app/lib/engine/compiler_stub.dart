@@ -49,6 +49,7 @@ class CompilerStub {
     segmentId: 'OBJ_SEG_001',
         x0: 0,
     x1: 144000,
+    spanUsed: 36000,
 
   ),
   DomObjObject(
@@ -62,7 +63,7 @@ class CompilerStub {
     segmentId: 'OBJ_SEG_001',
         x0: 0,
     x1: 36000,
-    
+
   ),
 ],
       validation: DomObjValidation(
