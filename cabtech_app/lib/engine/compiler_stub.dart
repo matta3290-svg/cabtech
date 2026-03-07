@@ -1,5 +1,5 @@
-import 'dom_obj.dart';
-import 'engine_state.dart';
+import 'package:cabtech_app/engine/dom_obj.dart';
+import 'package:cabtech_app/engine/engine_state.dart';
 
 class CompilerStub {
   static DomObj compile(EngineState state) {
@@ -17,24 +17,40 @@ class CompilerStub {
     sourceToken: 'ROOM',
     objectClass: 'ROOM',
     status: 'VALID',
+    parentId: null,
+    roomId: 'OBJ_ROOM_001',
+    runId: null,
+    segmentId: null,
   ),
   DomObjObject(
     objectId: 'OBJ_RUN_001',
     sourceToken: 'RUN',
     objectClass: 'RUN',
     status: 'VALID',
+    parentId: 'OBJ_ROOM_001',
+    roomId: 'OBJ_ROOM_001',
+    runId: 'OBJ_RUN_001',
+    segmentId: null,
   ),
   DomObjObject(
     objectId: 'OBJ_SEG_001',
     sourceToken: 'SEGMENT',
     objectClass: 'SEGMENT',
     status: 'VALID',
+    parentId: 'OBJ_RUN_001',
+    roomId: 'OBJ_ROOM_001',
+    runId: 'OBJ_RUN_001',
+    segmentId: 'OBJ_SEG_001',
   ),
   DomObjObject(
     objectId: 'OBJ_CAB_001',
     sourceToken: 'BD3',
     objectClass: 'BASE_CABINET',
     status: 'VALID',
+    parentId: 'OBJ_SEG_001',
+    roomId: 'OBJ_ROOM_001',
+    runId: 'OBJ_RUN_001',
+    segmentId: 'OBJ_SEG_001',
   ),
 ],
       validation: DomObjValidation(

@@ -31,12 +31,20 @@ class DomObjObject {
   final String sourceToken;
   final String objectClass;
   final String status;
+  final String? parentId;
+  final String? roomId;
+  final String? runId;
+  final String? segmentId;
 
   const DomObjObject({
     required this.objectId,
     required this.sourceToken,
     required this.objectClass,
     required this.status,
+    this.parentId,
+    this.roomId,
+    this.runId,
+    this.segmentId,
   });
 }
 
