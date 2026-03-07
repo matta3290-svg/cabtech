@@ -35,6 +35,8 @@ class DomObjObject {
   final String? roomId;
   final String? runId;
   final String? segmentId;
+  final int? x0;
+  final int? x1;
 
   const DomObjObject({
     required this.objectId,
@@ -45,6 +47,8 @@ class DomObjObject {
     this.roomId,
     this.runId,
     this.segmentId,
+        this.x0,
+    this.x1,
   });
 }
 

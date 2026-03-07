@@ -21,6 +21,9 @@ class CompilerStub {
     roomId: 'OBJ_ROOM_001',
     runId: null,
     segmentId: null,
+        x0: 0,
+    x1: 144000,
+
   ),
   DomObjObject(
     objectId: 'OBJ_RUN_001',
@@ -31,6 +34,9 @@ class CompilerStub {
     roomId: 'OBJ_ROOM_001',
     runId: 'OBJ_RUN_001',
     segmentId: null,
+        x0: 0,
+    x1: 144000,
+
   ),
   DomObjObject(
     objectId: 'OBJ_SEG_001',
@@ -41,6 +47,9 @@ class CompilerStub {
     roomId: 'OBJ_ROOM_001',
     runId: 'OBJ_RUN_001',
     segmentId: 'OBJ_SEG_001',
+        x0: 0,
+    x1: 144000,
+
   ),
   DomObjObject(
     objectId: 'OBJ_CAB_001',
@@ -51,6 +60,9 @@ class CompilerStub {
     roomId: 'OBJ_ROOM_001',
     runId: 'OBJ_RUN_001',
     segmentId: 'OBJ_SEG_001',
+        x0: 0,
+    x1: 36000,
+    
   ),
 ],
       validation: DomObjValidation(
