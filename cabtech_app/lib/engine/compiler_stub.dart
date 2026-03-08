@@ -76,6 +76,18 @@ DomObjObject(
   x0: 36000,
   x1: 72000,
 ),
+DomObjObject(
+  objectId: 'OBJ_CAB_003',
+  sourceToken: 'BD3',
+  objectClass: 'BASE_CABINET',
+  status: 'VALID',
+  parentId: 'OBJ_SEG_001',
+  roomId: 'OBJ_ROOM_001',
+  runId: 'OBJ_RUN_001',
+  segmentId: 'OBJ_SEG_001',
+  x0: 72000,
+  x1: 108000,
+),
 ],
       validation: DomObjValidation(
   ok: 72000 <= 144000,
