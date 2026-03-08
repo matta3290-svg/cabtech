@@ -2,6 +2,26 @@ import 'package:cabtech_app/engine/dom_obj.dart';
 import 'package:cabtech_app/engine/engine_state.dart';
 
 class CompilerStub {
+    static const List<Map<String, dynamic>> cabinetSpecs = [
+    {
+      'objectId': 'OBJ_CAB_001',
+      'sourceToken': 'BD3',
+      'objectClass': 'BASE_CABINET',
+      'width': 36000,
+    },
+    {
+      'objectId': 'OBJ_CAB_002',
+      'sourceToken': 'BD3',
+      'objectClass': 'BASE_CABINET',
+      'width': 36000,
+    },
+    {
+      'objectId': 'OBJ_CAB_003',
+      'sourceToken': 'BD3',
+      'objectClass': 'BASE_CABINET',
+      'width': 36000,
+    },
+  ];
   static DomObjObject buildCabinet({
     required String objectId,
     required String sourceToken,
@@ -36,21 +56,30 @@ class CompilerStub {
     const int segmentX0 = 0;
     const int segmentX1 = 144000;
 
-    const int cabinetWidth = 36000;
+        int currentX = segmentX0;
+    final cabinets = <DomObjObject>[];
 
-    int currentX = segmentX0;
+    for (final spec in cabinetSpecs) {
+      final width = spec['width'] as int;
+      final x0 = currentX;
+      final x1 = x0 + width;
 
-    final cabinet1X0 = currentX;
-    final cabinet1X1 = cabinet1X0 + cabinetWidth;
-    currentX = cabinet1X1;
+      cabinets.add(
+        buildCabinet(
+          objectId: spec['objectId'] as String,
+          sourceToken: spec['sourceToken'] as String,
+          objectClass: spec['objectClass'] as String,
+          parentId: 'OBJ_SEG_001',
+          roomId: 'OBJ_ROOM_001',
+          runId: 'OBJ_RUN_001',
+          segmentId: 'OBJ_SEG_001',
+          x0: x0,
+          x1: x1,
+        ),
+      );
 
-    final cabinet2X0 = currentX;
-    final cabinet2X1 = cabinet2X0 + cabinetWidth;
-    currentX = cabinet2X1;
-
-    final cabinet3X0 = currentX;
-    final cabinet3X1 = cabinet3X0 + cabinetWidth;
-    currentX = cabinet3X1;
+      currentX = x1;
+    }
 
     final segmentSpanUsed = currentX;
 
@@ -102,46 +131,13 @@ class CompilerStub {
         ),
       
       
-        buildCabinet(
-          objectId: 'OBJ_CAB_001',
-          sourceToken: 'BD3',
-          objectClass: 'BASE_CABINET',
-          parentId: 'OBJ_SEG_001',
-          roomId: 'OBJ_ROOM_001',
-          runId: 'OBJ_RUN_001',
-          segmentId: 'OBJ_SEG_001',
-          x0: cabinet1X0,
-          x1: cabinet1X1,
-        ),
-        buildCabinet(
-          objectId: 'OBJ_CAB_002',
-          sourceToken: 'BD3',
-          objectClass: 'BASE_CABINET',
-          parentId: 'OBJ_SEG_001',
-          roomId: 'OBJ_ROOM_001',
-          runId: 'OBJ_RUN_001',
-          segmentId: 'OBJ_SEG_001',
-          x0: cabinet2X0,
-          x1: cabinet2X1,
-        ),
-        buildCabinet(
-          objectId: 'OBJ_CAB_003',
-          sourceToken: 'BD3',
-          objectClass: 'BASE_CABINET',
-          parentId: 'OBJ_SEG_001',
-          roomId: 'OBJ_ROOM_001',
-          runId: 'OBJ_RUN_001',
-          segmentId: 'OBJ_SEG_001',
-          x0: cabinet3X0,
-          x1: cabinet3X1,
-        ),
+                ...cabinets,
       ],
       validation: DomObjValidation(
-        ok: cabinet3X1 <= segmentX1,
-        errors: cabinet3X1 <= segmentX1
+                ok: segmentSpanUsed <= segmentX1,
+        errors: segmentSpanUsed <= segmentX1
             ? []
             : ['CABINET placement exceeds segment span.'],
-        warnings: const [],
       ),
     );
 
