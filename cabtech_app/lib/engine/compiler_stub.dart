@@ -100,18 +100,7 @@ class CompilerStub {
           x1: segmentX1,
           spanUsed: segmentSpanUsed,
         ),
-        DomObjObject(
-          objectId: 'OBJ_CAB_001',
-          sourceToken: 'BD3',
-          objectClass: 'BASE_CABINET',
-          status: 'VALID',
-          parentId: 'OBJ_SEG_001',
-          roomId: 'OBJ_ROOM_001',
-          runId: 'OBJ_RUN_001',
-          segmentId: 'OBJ_SEG_001',
-          x0: cabinet1X0,
-          x1: cabinet1X1,
-        ),
+      
       
         buildCabinet(
           objectId: 'OBJ_CAB_001',
