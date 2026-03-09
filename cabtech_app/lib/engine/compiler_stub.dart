@@ -1,27 +1,8 @@
 import 'package:cabtech_app/engine/dom_obj.dart';
 import 'package:cabtech_app/engine/engine_state.dart';
+import 'package:cabtech_app/engine/command_stream.dart';
 
 class CompilerStub {
-    static const List<Map<String, dynamic>> cabinetSpecs = [
-    {
-      'objectId': 'OBJ_CAB_001',
-      'sourceToken': 'BD3',
-      'objectClass': 'BASE_CABINET',
-      'width': 36000,
-    },
-    {
-      'objectId': 'OBJ_CAB_002',
-      'sourceToken': 'BD3',
-      'objectClass': 'BASE_CABINET',
-      'width': 36000,
-    },
-    {
-      'objectId': 'OBJ_CAB_003',
-      'sourceToken': 'BD3',
-      'objectClass': 'BASE_CABINET',
-      'width': 36000,
-    },
-  ];
   static DomObjObject buildCabinet({
     required String objectId,
     required String sourceToken,
@@ -46,6 +27,7 @@ class CompilerStub {
       x1: x1,
     );
   }
+
   static DomObj compile(EngineState state) {
     const int roomX0 = 0;
     const int roomX1 = 144000;
@@ -56,32 +38,92 @@ class CompilerStub {
     const int segmentX0 = 0;
     const int segmentX1 = 144000;
 
-        int currentX = segmentX0;
-    final cabinets = <DomObjObject>[];
+    final commandStream = CommandStream.demo();
 
-    for (final spec in cabinetSpecs) {
-      final width = spec['width'] as int;
-      final x0 = currentX;
-      final x1 = x0 + width;
+    final objects = <DomObjObject>[
+      DomObjObject(
+        objectId: 'OBJ_ROOM_001',
+        sourceToken: 'ROOM',
+        objectClass: 'ROOM',
+        status: 'VALID',
+        parentId: null,
+        roomId: 'OBJ_ROOM_001',
+        runId: null,
+        segmentId: null,
+        x0: roomX0,
+        x1: roomX1,
+      ),
+    ];
 
-      cabinets.add(
-        buildCabinet(
-          objectId: spec['objectId'] as String,
-          sourceToken: spec['sourceToken'] as String,
-          objectClass: spec['objectClass'] as String,
-          parentId: 'OBJ_SEG_001',
+    int maxSpanUsed = 0;
+
+    for (final run in commandStream.runs) {
+      final runId = run['runId'] as String;
+      final segmentId = run['segmentId'] as String;
+      final cabinetSpecs = run['cabinets'] as List<dynamic>;
+
+      objects.add(
+        DomObjObject(
+          objectId: runId,
+          sourceToken: 'RUN',
+          objectClass: 'RUN',
+          status: 'VALID',
+          parentId: 'OBJ_ROOM_001',
           roomId: 'OBJ_ROOM_001',
-          runId: 'OBJ_RUN_001',
-          segmentId: 'OBJ_SEG_001',
-          x0: x0,
-          x1: x1,
+          runId: runId,
+          segmentId: null,
+          x0: runX0,
+          x1: runX1,
         ),
       );
 
-      currentX = x1;
-    }
+      int currentX = segmentX0;
 
-    final segmentSpanUsed = currentX;
+      for (final spec in cabinetSpecs) {
+        final cabinet = spec as Map<String, dynamic>;
+        final width = cabinet['width'] as int;
+
+        final x0 = currentX;
+        final x1 = x0 + width;
+
+        objects.add(
+          buildCabinet(
+            objectId: cabinet['objectId'] as String,
+            sourceToken: cabinet['sourceToken'] as String,
+            objectClass: cabinet['objectClass'] as String,
+            parentId: segmentId,
+            roomId: 'OBJ_ROOM_001',
+            runId: runId,
+            segmentId: segmentId,
+            x0: x0,
+            x1: x1,
+          ),
+        );
+
+        currentX = x1;
+      }
+
+      final segmentSpanUsed = currentX;
+      if (segmentSpanUsed > maxSpanUsed) {
+        maxSpanUsed = segmentSpanUsed;
+      }
+
+      objects.add(
+        DomObjObject(
+          objectId: segmentId,
+          sourceToken: 'SEGMENT',
+          objectClass: 'SEGMENT',
+          status: 'VALID',
+          parentId: runId,
+          roomId: 'OBJ_ROOM_001',
+          runId: runId,
+          segmentId: segmentId,
+          x0: segmentX0,
+          x1: segmentX1,
+          spanUsed: segmentSpanUsed,
+        ),
+      );
+    }
 
     final domObj = DomObj(
       meta: DomObjMeta(
@@ -91,53 +133,13 @@ class CompilerStub {
         strongboxVersion: state.canonIndex.strongboxVersion ?? 'unknown',
         lockRegistryVersion: state.lockRegistry.version,
       ),
-      objects: [
-        DomObjObject(
-          objectId: 'OBJ_ROOM_001',
-          sourceToken: 'ROOM',
-          objectClass: 'ROOM',
-          status: 'VALID',
-          parentId: null,
-          roomId: 'OBJ_ROOM_001',
-          runId: null,
-          segmentId: null,
-          x0: roomX0,
-          x1: roomX1,
-        ),
-        DomObjObject(
-          objectId: 'OBJ_RUN_001',
-          sourceToken: 'RUN',
-          objectClass: 'RUN',
-          status: 'VALID',
-          parentId: 'OBJ_ROOM_001',
-          roomId: 'OBJ_ROOM_001',
-          runId: 'OBJ_RUN_001',
-          segmentId: null,
-          x0: runX0,
-          x1: runX1,
-        ),
-        DomObjObject(
-          objectId: 'OBJ_SEG_001',
-          sourceToken: 'SEGMENT',
-          objectClass: 'SEGMENT',
-          status: 'VALID',
-          parentId: 'OBJ_RUN_001',
-          roomId: 'OBJ_ROOM_001',
-          runId: 'OBJ_RUN_001',
-          segmentId: 'OBJ_SEG_001',
-          x0: segmentX0,
-          x1: segmentX1,
-          spanUsed: segmentSpanUsed,
-        ),
-      
-      
-                ...cabinets,
-      ],
+      objects: objects,
       validation: DomObjValidation(
-                ok: segmentSpanUsed <= segmentX1,
-        errors: segmentSpanUsed <= segmentX1
+        ok: maxSpanUsed <= segmentX1,
+        errors: maxSpanUsed <= segmentX1
             ? []
             : ['CABINET placement exceeds segment span.'],
+        warnings: const [],
       ),
     );
 
