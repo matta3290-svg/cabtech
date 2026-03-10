@@ -6,18 +6,19 @@ class CommandStream {
   });
 
   static CommandStream demo() {
-    return const CommandStream(
-      runs: [
-        {
-          'runId': 'OBJ_RUN_001',
-          'segmentId': 'OBJ_SEG_001',
-          'cabinets': [
-            {
-              'objectId': 'OBJ_CAB_001',
-              'sourceToken': 'BD3',
-              'objectClass': 'BASE_CABINET',
-              'width': 36000,
-            },
+  return const CommandStream(
+    runs: [
+      {
+        'command': 'RUNX',
+        'runId': 'OBJ_RUN_001',
+        'segmentId': 'OBJ_SEG_001',
+        'cabinets': [
+          {
+            'objectId': 'OBJ_CAB_001',
+            'sourceToken': 'BD3',
+            'objectClass': 'BASE_CABINET',
+            'width': 36000,
+          },
             {
               'objectId': 'OBJ_CAB_002',
               'sourceToken': 'BD3',
@@ -33,9 +34,10 @@ class CommandStream {
           ],
         },
         {
-          'runId': 'OBJ_RUN_002',
-          'segmentId': 'OBJ_SEG_002',
-          'cabinets': [
+             'command': 'RUNX',
+             'runId': 'OBJ_RUN_002',
+             'segmentId': 'OBJ_SEG_002',
+            'cabinets': [
             {
               'objectId': 'OBJ_CAB_004',
               'sourceToken': 'BD3',

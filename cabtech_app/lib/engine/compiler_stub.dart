@@ -39,6 +39,7 @@ class CompilerStub {
     const int segmentX1 = 144000;
 
     final commandStream = CommandStream.demo();
+    final compileErrors = <String>[];
 
     final objects = <DomObjObject>[
       DomObjObject(
@@ -58,6 +59,19 @@ class CompilerStub {
     int maxSpanUsed = 0;
 
     for (final run in commandStream.runs) {
+      final command = run['command'];
+
+      if (command != 'RUNX') {
+        continue;
+      }
+
+      if (!run.containsKey('runId') ||
+          !run.containsKey('segmentId') ||
+          !run.containsKey('cabinets')) {
+        compileErrors.add('RUNX command missing required fields.');
+        continue;
+      }
+
       final runId = run['runId'] as String;
       final segmentId = run['segmentId'] as String;
       final cabinetSpecs = run['cabinets'] as List<dynamic>;
@@ -135,10 +149,12 @@ class CompilerStub {
       ),
       objects: objects,
       validation: DomObjValidation(
-        ok: maxSpanUsed <= segmentX1,
-        errors: maxSpanUsed <= segmentX1
-            ? []
-            : ['CABINET placement exceeds segment span.'],
+        ok: maxSpanUsed <= segmentX1 && compileErrors.isEmpty,
+        errors: [
+          ...compileErrors,
+          if (maxSpanUsed > segmentX1)
+            'CABINET placement exceeds segment span.',
+        ],
         warnings: const [],
       ),
     );
