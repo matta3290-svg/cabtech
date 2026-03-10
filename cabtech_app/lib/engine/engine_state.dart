@@ -1,6 +1,7 @@
 import 'canon_bundle.dart';
 import 'canon_index.dart';
 import 'lock_registry.dart';
+import 'lock_runtime.dart';
 
 class ValidationReport {
   static ValidationReport validate(
@@ -48,12 +49,14 @@ class EngineState {
   final CanonBundle canonBundle;
   final CanonIndex canonIndex;
   final LockRegistry lockRegistry;
+  final LockRuntime lockRuntime;
   final ValidationReport validation;
 
   const EngineState({
     required this.canonBundle,
     required this.canonIndex,
     required this.lockRegistry,
+    required this.lockRuntime,
     required this.validation,
   });
 }
