@@ -1,7 +1,7 @@
 import 'package:cabtech_app/engine/dom_obj.dart';
 import 'package:cabtech_app/engine/engine_state.dart';
 import 'package:cabtech_app/engine/command_stream.dart';
-
+import 'package:cabtech_app/engine/strongbox_catalog.dart';
 class CompilerStub {
   static DomObjObject buildCabinet({
     required String objectId,
@@ -112,16 +112,26 @@ if (segmentX1 <= segmentX0) {
 
       for (final spec in cabinetSpecs) {
         final cabinet = spec as Map<String, dynamic>;
-        final width = cabinet['width'] as int;
+        final objectId = cabinet['objectId'] as String;
+        final token = cabinet['token'] as String;
+
+        final strongboxDef = StrongboxCatalog.lookup(token);
+        if (strongboxDef == null) {
+          compileErrors.add('Unknown Strongbox token: $token');
+          continue;
+        }
+
+        final width = strongboxDef['width'] as int;
+        final objectClass = strongboxDef['objectClass'] as String;
 
         final x0 = currentX;
         final x1 = x0 + width;
 
-        objects.add(
-          buildCabinet(
-            objectId: cabinet['objectId'] as String,
-            sourceToken: cabinet['sourceToken'] as String,
-            objectClass: cabinet['objectClass'] as String,
+objects.add(
+  buildCabinet(
+    objectId: objectId,
+    sourceToken: token,
+    objectClass: objectClass,    
             parentId: segmentId,
             roomId: 'OBJ_ROOM_001',
             runId: runId,
