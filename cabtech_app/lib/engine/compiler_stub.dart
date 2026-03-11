@@ -29,14 +29,14 @@ class CompilerStub {
   }
 
   static DomObj compile(EngineState state) {
-    const int roomX0 = 0;
-    const int roomX1 = 144000;
+    final roomX0 = state.globalSchemaRuntime.roomX0;
+final roomX1 = state.globalSchemaRuntime.roomX1;
 
-    const int runX0 = 0;
-    const int runX1 = 144000;
+final runX0 = state.globalSchemaRuntime.runX0;
+final runX1 = state.globalSchemaRuntime.runX1;
 
-    const int segmentX0 = 0;
-    const int segmentX1 = 144000;
+final segmentX0 = state.globalSchemaRuntime.segmentX0;
+final segmentX1 = state.globalSchemaRuntime.segmentX1;
 
     final commandStream = CommandStream.demo();
     final compileErrors = <String>[];
