@@ -4,6 +4,7 @@ import 'engine/engine_state.dart';
 import 'engine/lock_registry.dart';
 import 'engine/compiler_stub.dart';
 import 'engine/lock_runtime.dart';
+import 'engine/global_schema_runtime.dart';
 Future<EngineState> loadSchemas() async {
   final bundle = await CanonLoader.load(assetPaths: const [
     'assets/schema/GLOBAL_SCHEMA_HEADER_v1.0.yaml',
@@ -17,12 +18,17 @@ Future<EngineState> loadSchemas() async {
   version: '0',
   locks: [],
 );
-  final lockRuntime = LockRuntime.fromRegistry(locks);
-  final validation = ValidationReport.validate(bundle, index, locks);
 
-  final state = EngineState(
+final globalSchemaRuntime =
+    GlobalSchemaRuntime.defaultRuntime;
+
+final lockRuntime = LockRuntime.fromRegistry(locks);
+final validation = ValidationReport.validate(bundle, index, locks);
+
+final state = EngineState(
   canonBundle: bundle,
   canonIndex: index,
+  globalSchemaRuntime: globalSchemaRuntime,
   lockRegistry: locks,
   lockRuntime: lockRuntime,
   validation: validation,
