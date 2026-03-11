@@ -37,15 +37,15 @@ final state = EngineState(
 
   // ignore: avoid_print
   print(
-    'ENGINE_READY ok=${state.validation.ok} '
-    'engine=${state.canonIndex.engineVersion} '
-    'global=${state.canonIndex.globalSchemaVersion} '
-    'strongbox=${state.canonIndex.strongboxVersion} '
-    'locks=${state.lockRuntime.lockCount} '
-    'dom_obj=${domObj.meta.domObjVersion} '
-    'objects=${domObj.objects.length} '
-    'errors=${state.validation.errors.length}',
-  );
+  'ENGINE_READY ok=${domObj.validation.ok} '
+  'engine=${state.canonIndex.engineVersion} '
+  'global=${state.canonIndex.globalSchemaVersion} '
+  'strongbox=${state.canonIndex.strongboxVersion} '
+  'locks=${state.lockRuntime.lockCount} '
+  'dom_obj=${domObj.meta.domObjVersion} '
+  'objects=${domObj.objects.length} '
+  'errors=${domObj.validation.errors.length}',
+);
 
   return state;
 }
