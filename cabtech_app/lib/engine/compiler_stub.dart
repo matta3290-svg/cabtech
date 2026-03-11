@@ -30,6 +30,7 @@ class CompilerStub {
 
   static DomObj compile(EngineState state) {
     final roomX0 = state.globalSchemaRuntime.roomX0;
+
 final roomX1 = state.globalSchemaRuntime.roomX1;
 
 final runX0 = state.globalSchemaRuntime.runX0;
@@ -40,7 +41,13 @@ final segmentX1 = state.globalSchemaRuntime.segmentX1;
 
     final commandStream = CommandStream.demo();
     final compileErrors = <String>[];
+    if (state.lockRuntime.version.isEmpty) {
+  compileErrors.add('LockRuntime version missing.');
+}
 
+    if (state.lockRuntime.lockCount < 0) {
+  compileErrors.add('LockRuntime lockCount invalid.');
+}
     final objects = <DomObjObject>[
       DomObjObject(
         objectId: 'OBJ_ROOM_001',
