@@ -44,7 +44,17 @@ final segmentX1 = state.globalSchemaRuntime.segmentX1;
     if (state.lockRuntime.version.isEmpty) {
   compileErrors.add('LockRuntime version missing.');
 }
+    if (roomX1 <= roomX0) {
+  compileErrors.add('GlobalSchemaRuntime room span invalid.');
+}
 
+if (runX1 <= runX0) {
+  compileErrors.add('GlobalSchemaRuntime run span invalid.');
+}
+
+if (segmentX1 <= segmentX0) {
+  compileErrors.add('GlobalSchemaRuntime segment span invalid.');
+}
     if (state.lockRuntime.lockCount < 0) {
   compileErrors.add('LockRuntime lockCount invalid.');
 }
