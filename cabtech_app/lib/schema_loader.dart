@@ -27,7 +27,7 @@ final lockRuntime = LockRuntime.fromRegistry(locks);
 final strongboxCatalogRuntime =
     StrongboxCatalogRuntime.demo;
 final validation = ValidationReport.validate(bundle, index, locks);
-
+strongboxCatalogRuntime.validate(validation.errors);
 final state = EngineState(
   canonBundle: bundle,
   canonIndex: index,
