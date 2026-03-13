@@ -1,7 +1,6 @@
 import 'package:cabtech_app/engine/dom_obj.dart';
 import 'package:cabtech_app/engine/engine_state.dart';
 import 'package:cabtech_app/engine/command_stream.dart';
-import 'package:cabtech_app/engine/strongbox_catalog.dart';
 class CompilerStub {
   static DomObjObject buildCabinet({
     required String objectId,
@@ -115,7 +114,8 @@ if (segmentX1 <= segmentX0) {
         final objectId = cabinet['objectId'] as String;
         final token = cabinet['token'] as String;
 
-        final strongboxDef = StrongboxCatalog.lookup(token);
+        final strongboxDef =
+              state.strongboxCatalogRuntime.lookup(token);
         if (strongboxDef == null) {
           compileErrors.add('Unknown Strongbox token: $token');
           continue;

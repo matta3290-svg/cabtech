@@ -3,6 +3,7 @@ import 'canon_index.dart';
 import 'lock_registry.dart';
 import 'lock_runtime.dart';
 import 'global_schema_runtime.dart';
+import 'strongbox_catalog_runtime.dart';
 class ValidationReport {
   static ValidationReport validate(
     CanonBundle bundle,
@@ -52,6 +53,7 @@ class EngineState {
   final GlobalSchemaRuntime globalSchemaRuntime;
   final LockRegistry lockRegistry;
   final LockRuntime lockRuntime;
+  final StrongboxCatalogRuntime strongboxCatalogRuntime;
 
   final ValidationReport validation;
 
@@ -61,6 +63,7 @@ class EngineState {
     required this.globalSchemaRuntime,
     required this.lockRegistry,
     required this.lockRuntime,
+    required this.strongboxCatalogRuntime,
     required this.validation,
   });
 }

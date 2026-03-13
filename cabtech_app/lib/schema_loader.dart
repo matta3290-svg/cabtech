@@ -5,6 +5,7 @@ import 'engine/lock_registry.dart';
 import 'engine/compiler_stub.dart';
 import 'engine/lock_runtime.dart';
 import 'engine/global_schema_runtime.dart';
+import 'engine/strongbox_catalog_runtime.dart';
 Future<EngineState> loadSchemas() async {
   final bundle = await CanonLoader.load(assetPaths: const [
     'assets/schema/GLOBAL_SCHEMA_HEADER_v1.0.yaml',
@@ -23,6 +24,8 @@ final globalSchemaRuntime =
     GlobalSchemaRuntime.defaultRuntime;
 
 final lockRuntime = LockRuntime.fromRegistry(locks);
+final strongboxCatalogRuntime =
+    StrongboxCatalogRuntime.demo;
 final validation = ValidationReport.validate(bundle, index, locks);
 
 final state = EngineState(
@@ -31,6 +34,7 @@ final state = EngineState(
   globalSchemaRuntime: globalSchemaRuntime,
   lockRegistry: locks,
   lockRuntime: lockRuntime,
+  strongboxCatalogRuntime: strongboxCatalogRuntime,
   validation: validation,
 );
   final domObj = CompilerStub.compile(state);
