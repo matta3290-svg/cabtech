@@ -23,6 +23,7 @@ class DomObjValidation {
     required this.ok,
     this.errors = const [],
     this.warnings = const [],
+    
   });
 }
 
@@ -51,6 +52,7 @@ class DomObjObject {
         this.x0,
     this.x1,
     this.spanUsed,
+    
   });
 }
 
@@ -64,4 +66,32 @@ class DomObj {
     required this.objects,
     required this.validation,
   });
+
+  List<String> validateHierarchy() {
+    final errors = <String>[];
+
+    final objectIds = objects.map((o) => o.objectId).toSet();
+
+    for (final obj in objects) {
+      if (obj.objectClass == 'RUN') {
+        if (obj.parentId != 'OBJ_ROOM_001') {
+          errors.add('RUN ${obj.objectId} missing ROOM parent.');
+        }
+      }
+
+      if (obj.objectClass == 'SEGMENT') {
+        if (obj.parentId == null || !objectIds.contains(obj.parentId)) {
+          errors.add('SEGMENT ${obj.objectId} missing valid RUN parent.');
+        }
+      }
+
+      if (obj.objectClass == 'BASE_CABINET') {
+        if (obj.parentId == null || !objectIds.contains(obj.parentId)) {
+          errors.add('CABINET ${obj.objectId} missing valid SEGMENT parent.');
+        }
+      }
+    }
+
+    return errors;
+  }
 }
