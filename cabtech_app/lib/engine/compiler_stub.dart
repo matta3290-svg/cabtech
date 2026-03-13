@@ -167,25 +167,38 @@ objects.add(
     }
 
     final domObj = DomObj(
-      meta: DomObjMeta(
-        domObjVersion: '0.1',
-        engineVersion: state.canonIndex.engineVersion ?? 'unknown',
-        globalSchemaVersion: state.canonIndex.globalSchemaVersion ?? 'unknown',
-        strongboxVersion: state.canonIndex.strongboxVersion ?? 'unknown',
-        lockRegistryVersion: state.lockRegistry.version,
-      ),
-      objects: objects,
-      validation: DomObjValidation(
-        ok: maxSpanUsed <= segmentX1 && compileErrors.isEmpty,
-        errors: [
-          ...compileErrors,
-          if (maxSpanUsed > segmentX1)
-            'CABINET placement exceeds segment span.',
-        ],
-        warnings: const [],
-      ),
-    );
+  meta: DomObjMeta(
+    domObjVersion: '0.1',
+    engineVersion: state.canonIndex.engineVersion ?? 'unknown',
+    globalSchemaVersion: state.canonIndex.globalSchemaVersion ?? 'unknown',
+    strongboxVersion: state.canonIndex.strongboxVersion ?? 'unknown',
+    lockRegistryVersion: state.lockRegistry.version,
+  ),
+  objects: objects,
+  validation: const DomObjValidation(
+    ok: true,
+    errors: [],
+    warnings: [],
+  ),
+);
 
-    return domObj;
+final hierarchyErrors = domObj.validateHierarchy();
+
+final allErrors = [
+  ...compileErrors,
+  if (maxSpanUsed > segmentX1)
+    'CABINET placement exceeds segment span.',
+  ...hierarchyErrors,
+];
+
+return DomObj(
+  meta: domObj.meta,
+  objects: domObj.objects,
+  validation: DomObjValidation(
+    ok: allErrors.isEmpty,
+    errors: allErrors,
+    warnings: const [],
+  ),
+);
   }
 }
