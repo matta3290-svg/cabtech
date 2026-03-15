@@ -23,7 +23,6 @@ class DomObjValidation {
     required this.ok,
     this.errors = const [],
     this.warnings = const [],
-    
   });
 }
 
@@ -39,6 +38,12 @@ class DomObjObject {
   final int? x0;
   final int? x1;
   final int? spanUsed;
+  final String? createdBy;
+  final String? sourceType;
+  final String? sourceRef;
+  final DateTime? createdAt;
+
+
 
   const DomObjObject({
     required this.objectId,
@@ -49,10 +54,14 @@ class DomObjObject {
     this.roomId,
     this.runId,
     this.segmentId,
-        this.x0,
+    this.x0,
     this.x1,
     this.spanUsed,
-    
+    this.createdBy,
+    this.sourceType,
+    this.sourceRef,
+    this.createdAt,
+
   });
 }
 
@@ -89,6 +98,24 @@ class DomObj {
         if (obj.parentId == null || !objectIds.contains(obj.parentId)) {
           errors.add('CABINET ${obj.objectId} missing valid SEGMENT parent.');
         }
+      }
+    }
+
+    return errors;
+  }
+
+  List<String> validateSpans() {
+    final errors = <String>[];
+
+    for (final obj in objects) {
+      if (obj.x0 == null || obj.x1 == null) {
+        continue;
+      }
+
+      if (obj.x1! <= obj.x0!) {
+        errors.add(
+          '${obj.objectClass} ${obj.objectId} has invalid span (x1 <= x0).',
+        );
       }
     }
 

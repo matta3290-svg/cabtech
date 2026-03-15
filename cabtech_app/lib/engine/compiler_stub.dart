@@ -12,6 +12,10 @@ class CompilerStub {
     required String segmentId,
     required int x0,
     required int x1,
+    String? createdBy,
+    String? sourceType,
+    String? sourceRef,
+    DateTime? createdAt,
   }) {
     return DomObjObject(
       objectId: objectId,
@@ -24,6 +28,10 @@ class CompilerStub {
       segmentId: segmentId,
       x0: x0,
       x1: x1,
+     createdBy: createdBy,
+     sourceType: sourceType,
+     sourceRef: sourceRef,
+     createdAt: createdAt,
     );
   }
 
@@ -138,6 +146,11 @@ objects.add(
             segmentId: segmentId,
             x0: x0,
             x1: x1,
+            createdBy: 'system',
+            sourceType: 'CommandStream',
+            sourceRef: objectId,
+            createdAt: DateTime.now(),
+            
           ),
         );
 
@@ -147,6 +160,7 @@ objects.add(
       final segmentSpanUsed = currentX;
       if (segmentSpanUsed > maxSpanUsed) {
         maxSpanUsed = segmentSpanUsed;
+        
       }
 
       objects.add(
@@ -162,6 +176,7 @@ objects.add(
           x0: segmentX0,
           x1: segmentX1,
           spanUsed: segmentSpanUsed,
+          
         ),
       );
     }
@@ -183,12 +198,14 @@ objects.add(
 );
 
 final hierarchyErrors = domObj.validateHierarchy();
+final spanErrors = domObj.validateSpans();
 
-final allErrors = [
+final allErrors = <String> [
   ...compileErrors,
   if (maxSpanUsed > segmentX1)
     'CABINET placement exceeds segment span.',
   ...hierarchyErrors,
+  ...spanErrors
 ];
 
 return DomObj(
