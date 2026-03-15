@@ -6,6 +6,7 @@ import 'engine/compiler_stub.dart';
 import 'engine/lock_runtime.dart';
 import 'engine/global_schema_runtime.dart';
 import 'engine/strongbox_catalog_runtime.dart';
+import 'engine/geometry_resolver.dart';
 Future<EngineState> loadSchemas() async {
   final bundle = await CanonLoader.load(assetPaths: const [
     'assets/schema/GLOBAL_SCHEMA_HEADER_v1.0.yaml',
@@ -38,6 +39,8 @@ final state = EngineState(
   validation: validation,
 );
   final domObj = CompilerStub.compile(state);
+  final resolvableCount =
+    GeometryResolver.countResolvableObjects(domObj);
 
   // ignore: avoid_print
   print(
@@ -48,6 +51,7 @@ final state = EngineState(
   'locks=${state.lockRuntime.lockCount} '
   'dom_obj=${domObj.meta.domObjVersion} '
   'objects=${domObj.objects.length} '
+  'resolvable=$resolvableCount '
   'errors=${domObj.validation.errors.length}',
 );
 
