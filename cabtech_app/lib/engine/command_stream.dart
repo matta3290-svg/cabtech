@@ -14,13 +14,13 @@ class CommandStream {
         'segmentId': 'OBJ_SEG_001',
         'cabinets': [
   {
-    'objectId': 'OBJ_CAB_001',
-    'token': 'BD3',
-  },
-  {
-    'objectId': 'OBJ_CAB_002',
-    'token': 'BD3',
-  },
+  'objectId': 'OBJ_CAB_001',
+  'token': 'BD3',
+},
+{
+  'objectId': 'OBJ_CAB_002',
+  'token': 'BD3',
+},
   {
     'objectId': 'OBJ_CAB_003',
     'token': 'BD3',

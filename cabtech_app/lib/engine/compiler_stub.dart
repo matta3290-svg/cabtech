@@ -22,6 +22,7 @@ class CompilerStub {
       sourceToken: sourceToken,
       objectClass: objectClass,
       status: 'VALID',
+      isGeometric: false,
       parentId: parentId,
       roomId: roomId,
       runId: runId,
@@ -71,12 +72,14 @@ if (segmentX1 <= segmentX0) {
         sourceToken: 'ROOM',
         objectClass: 'ROOM',
         status: 'VALID',
+        isGeometric: true,
         parentId: null,
         roomId: 'OBJ_ROOM_001',
         runId: null,
         segmentId: null,
         x0: roomX0,
         x1: roomX1,
+        
       ),
     ];
 
@@ -99,6 +102,7 @@ if (segmentX1 <= segmentX0) {
       final runId = run['runId'] as String;
       final segmentId = run['segmentId'] as String;
       final cabinetSpecs = run['cabinets'] as List<dynamic>;
+      
 
       objects.add(
         DomObjObject(
@@ -106,6 +110,7 @@ if (segmentX1 <= segmentX0) {
           sourceToken: 'RUN',
           objectClass: 'RUN',
           status: 'VALID',
+          isGeometric: false,
           parentId: 'OBJ_ROOM_001',
           roomId: 'OBJ_ROOM_001',
           runId: runId,
@@ -169,6 +174,7 @@ objects.add(
           sourceToken: 'SEGMENT',
           objectClass: 'SEGMENT',
           status: 'VALID',
+          isGeometric: true,
           parentId: runId,
           roomId: 'OBJ_ROOM_001',
           runId: runId,
@@ -176,6 +182,8 @@ objects.add(
           x0: segmentX0,
           x1: segmentX1,
           spanUsed: segmentSpanUsed,
+          
+          
           
         ),
       );
@@ -199,13 +207,14 @@ objects.add(
 
 final hierarchyErrors = domObj.validateHierarchy();
 final spanErrors = domObj.validateSpans();
-
-final allErrors = <String> [
+final idErrors = domObj.validateUniqueObjectIds();
+final allErrors = <String>[
   ...compileErrors,
   if (maxSpanUsed > segmentX1)
     'CABINET placement exceeds segment span.',
   ...hierarchyErrors,
-  ...spanErrors
+  ...spanErrors,
+  ...idErrors,
 ];
 
 return DomObj(

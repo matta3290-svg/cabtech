@@ -31,6 +31,7 @@ class DomObjObject {
   final String sourceToken;
   final String objectClass;
   final String status;
+  final bool isGeometric;
   final String? parentId;
   final String? roomId;
   final String? runId;
@@ -42,7 +43,7 @@ class DomObjObject {
   final String? sourceType;
   final String? sourceRef;
   final DateTime? createdAt;
-
+  
 
 
   const DomObjObject({
@@ -50,6 +51,7 @@ class DomObjObject {
     required this.sourceToken,
     required this.objectClass,
     required this.status,
+    required this.isGeometric,
     this.parentId,
     this.roomId,
     this.runId,
@@ -105,20 +107,40 @@ class DomObj {
   }
 
   List<String> validateSpans() {
-    final errors = <String>[];
+  final errors = <String>[];
 
-    for (final obj in objects) {
-      if (obj.x0 == null || obj.x1 == null) {
-        continue;
-      }
+  for (final obj in objects) {
+  final x0 = obj.x0;
+  final x1 = obj.x1;
 
-      if (obj.x1! <= obj.x0!) {
-        errors.add(
-          '${obj.objectClass} ${obj.objectId} has invalid span (x1 <= x0).',
-        );
-      }
-    }
-
-    return errors;
+  if (x0 == null || x1 == null) {
+    continue;
   }
+
+  if (x1 <= x0) {
+    errors.add(
+      '${obj.objectClass} ${obj.objectId} has invalid span (x1 <= x0).',
+    );
+  }
+}
+
+  return errors;
+}
+
+List<String> validateUniqueObjectIds() {
+  final errors = <String>[];
+  final seen = <String>{};
+
+  for (final obj in objects) {
+    if (seen.contains(obj.objectId)) {
+      errors.add(
+        'Duplicate objectId detected: ${obj.objectId}.',
+      );
+    } else {
+      seen.add(obj.objectId);
+    }
+  }
+
+  return errors;
+}
 }
